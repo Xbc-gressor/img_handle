@@ -1,9 +1,7 @@
-# coding:utf-8
-# 验证码图像标注GUI
-
 from PyQt5 import QtWidgets,QtCore,QtGui
 import sys,os
 import time
+import shutil
 import traceback
 
 class ImgTag(QtWidgets.QMainWindow):
@@ -127,18 +125,12 @@ class ImgTag(QtWidgets.QMainWindow):
         # 修改当前图像文件名
         new_tag = self.img_input.text() # 获取当前输入框内容
         current_img = self.img_index_dict[self.current_index] # 获取当前图片名称
-        try:
-            os.rename(
-                os.path.join(self.dir_path,current_img),
-                os.path.join(self.dir_path,new_tag+'.'+current_img.split('.')[-1])
-            ) # 修改文件名
-            self.img_index_dict[self.current_index] = new_tag+'.'+current_img.split('.')[-1]
-        except FileExistsError as e: # 同名文件异常
-            print(repr(e))
-            QtWidgets.QMessageBox.information(
-                self, '提示', '已存在同名文件！',
-                QtWidgets.QMessageBox.Ok
-            )
+        base_path = "C:/Users/user/Python学习/武大本科生教务系统验证码预处理和CNN识别模型源代码/extracted_letter_images"
+        save_path = os.path.join(base_path,new_tag)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        
+        shutil.move(os.path.join(self.dir_path,current_img),save_path)
 
         # 当前图像索引加1
         self.current_index += 1
